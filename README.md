@@ -90,3 +90,6 @@ vmctl> set endpoint http://192.168.150.83:5606
 ```
 
 `http://` and `https://` are not treated as comments.
+
+export PATH="$HOME/.local/bin:$PATH"
+echo $PATH
