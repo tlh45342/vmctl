@@ -1,82 +1,92 @@
-# vmctl
+# vmctl 0.0.8
 
-`vmctl` is the command-line client for **Foundry**, an experimental virtualization
-platform currently under development.
+`vmctl` is the command-line tool for the **Foundry** project. It communicates
+with a Foundry server to manage virtual-machine objects, consoles, configuration,
+and automation scripts.
 
-It communicates with one or more Foundry servers to create, configure, and
-manage virtual machines, upload programs, control virtual consoles, and
-automate operations through scripts.
-
----
-
-## Part of the Foundry Project
-
-`vmctl` is one component of the Foundry ecosystem.
-
-Current components include:
-
-- **Foundry** – Virtualization management server
-- **vmctl** – Command-line management client
-- **vconsole** – Remote virtual console service
-- **t32-node** – T32 virtual machine node
-- **t32-asm** – T32 assembler
-- **t32-cc** – T32 C compiler (work in progress)
-
----
-
-## Repository
-
-Clone the project:
+Clone the repository:
 
 ```bash
 git clone https://github.com/tlh45342/vmctl.git
 ```
 
----
+## Persistent configuration
 
-## Building
-
-### Linux
-
-```bash
-make
-sudo make install
+```text
+vmctl config show
+vmctl config set endpoint http://192.168.150.83:5606
+vmctl config set account tom
+vmctl config set region local
 ```
 
-### Windows (MinGW)
+These commands update `~/.foundry/config`.
 
-```bat
+## Session-only values
+
+Inside interactive or script mode:
+
+```text
+set endpoint http://192.168.150.83:5606
+```
+
+This changes only the running `vmctl` process. It does not edit the config
+file. URLs containing `http://` or `https://` are preserved correctly.
+
+## Script execution
+
+Both forms use the same evaluator and share the current session:
+
+```text
+do examples/build.vmctl
+import examples/build.vmctl
+```
+
+From the operating-system shell, stdin is also supported:
+
+```text
+vmctl < examples/build.vmctl
+```
+
+## VM scripting
+
+```text
+id = vm create
+use $id
+current
+```
+
+## Building and installing
+
+Linux and macOS default to a per-user installation:
+
+```bash
+make clean
 make
+make test
 make install
 ```
 
----
-
-## Current Features
-
-- Interactive shell
-- Batch scripting
-- `do` / `import` script execution
-- VM management
-- Console management
-- Configuration management
-- Session variables
-
----
-
-## Example
+This installs `vmctl` to:
 
 ```text
-vmctl
-vmctl> id = vm create
-vmctl> use $id
-vmctl> current
-vmctl> do examples/build.vmctl
+~/.local/bin/vmctl
 ```
 
----
+For a system-wide installation:
 
-## Status
+```bash
+sudo make PREFIX=/usr/local install
+```
 
-This project is under active development as part of the Foundry virtualization
-platform. Interfaces and commands may evolve as the architecture matures.
+Windows continues to use the configured Windows prefix in the Makefile.
+
+## Parser behavior verified in 0.0.8
+
+The interactive parser accepts multiple arguments and URLs:
+
+```text
+vmctl> vm list
+vmctl> set endpoint http://192.168.150.83:5606
+```
+
+`http://` and `https://` are not treated as comments.

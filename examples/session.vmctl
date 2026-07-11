@@ -1,0 +1,4 @@
+# This URL must not be mistaken for a // comment.
+set endpoint http://192.168.150.83:5606
+set platform "Mac and Windows"
+vars
